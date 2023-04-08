@@ -5,6 +5,8 @@
 [https://fmad.io/](https://fmad.io)
 
 
+To Compile - gcc main.c -lm -D_LARGEFILE64_SOURCE=1 -o pcap_latency
+
 pcap_diff is a simple **packet analyzer** tool used to extract time difference between the same packets in 2 different pcap files. 
 
 More detailed examples can be found at http://fmad.io/blog-packet-analyzer.html 
