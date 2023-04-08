@@ -146,8 +146,8 @@ static s64		s_FileDiffLatencyTraceMin	= 1e12;			// latency threshold to start pr
 
 static u64		s_HashMemory				= kMB(128);		// default hash memory size
 static bool		s_EnableMMAP				= true;			// disable use of mmap, use fread instead
-static bool		s_EnableTraceOverflow 		= false;		// dump overflow packet info to console
-static s64		s_TimeDeltaMaxNS			= 100e6;		// max time between packets before discarding
+static bool		s_EnableTraceOverflow 		= true;		// dump overflow packet info to console
+static s64		s_TimeDeltaMaxNS			= 10000e6;		// max time between packets before discarding
 
 static bool		s_EnableWTF					= false;		// dump everything	
 
@@ -350,9 +350,9 @@ static u128 PayloadHash(u8* Payload, u32 Length)
 static u32*			s_IndexLevel0 = NULL;	// first level index
 
 static HashNode_t* 	s_HashList = NULL;		// memory allocated for nodes
-static u32			s_HashPos = 0;			// current allocation position
+static u64			s_HashPos = 0;			// current allocation position
 static u64			s_HashCnt = 0;			// total allocated cnt 
-static u32			s_HashMax = 0;			// max number of hash positions 
+static u64			s_HashMax = 0;			// max number of hash positions 
 
 static HashNode_t*	s_HashLRUHead = NULL;	// head (most recently used) of LRU ndoe list
 static HashNode_t*	s_HashLRUTail = NULL;	// tail (least recently used) of nodes 
@@ -1111,12 +1111,6 @@ static void PrintLatencyHisto(u32 PCAPCnt, PCAPFile_t* PCAPFile[])
 	double Top 		= s_FileDiffSum0 * s_FileDiffSum2 - s_FileDiffSum1 * s_FileDiffSum1;
 	double StdDev 	= sqrt(Top) / s_FileDiffSum0; 
 
-	printf("Stats\n");
-	printf("  Mean    : %f ns\n", Mean);
-	printf("  Std Dev : %f ns\n", StdDev);
-	printf("  Samples : %.f\n",  s_FileDiffSum0);
-	printf("\n");
-
 	printf("Histogram\n");
 	printf("  Min     : %10lli ns\n", s_LatencyHistoMin);
 	printf("  Max     : %10lli ns\n", s_LatencyHistoMax);
@@ -1160,6 +1154,12 @@ static void PrintLatencyHisto(u32 PCAPCnt, PCAPFile_t* PCAPFile[])
 		printf("  [%s] packets not in [%s] : %lli Pkts\n", PCAPFile[0]->Path, PCAPFile[1]->Path, s_FileDiffMissingA);  
 		printf("  [%s] packets not in [%s] : %lli Pkts\n", PCAPFile[1]->Path, PCAPFile[0]->Path, s_FileDiffMissingB);  
 	}
+	
+	printf("Stats\n");
+	printf("  Mean    : %f ns\n", Mean);
+	printf("  Std Dev : %f ns\n", StdDev);
+	printf("  Samples : %.f\n",  s_FileDiffSum0);
+	printf("\n");
 }
 
 //---------------------------------------------------------------------------------------------
@@ -1491,7 +1491,8 @@ int main(int argc, char* argv[])
 			// amount of memory to allocate for hash nodes 
 			else if (strcmp(argv[i], "--hash-memory") == 0)
 			{
-				s_HashMemory = atoi(argv[i+1])*1024*1024;
+				//s_HashMemory = atoi(argv[i+1])*1024*1024;
+				s_HashMemory = (u64) atoi(argv[i+1])*1024*1024;
 				i+= 1;
 			}
 			// use fread of the data
