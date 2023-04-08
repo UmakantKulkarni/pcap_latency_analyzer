@@ -1584,7 +1584,7 @@ int main(int argc, char* argv[])
 	s_HashMax 			= s_HashMemory / sizeof(HashNode_t); 
 	s_HashList 			= (HashNode_t*)malloc(s_HashMax * sizeof(HashNode_t));
 	memset(s_HashList, 0, s_HashMax * sizeof(HashNode_t));
-	printf("HashMemory: %lliMB %i Nodes\n", (s_HashMax * sizeof(HashNode_t)) / kMB(1), s_HashMax );
+	printf("HashMemory: %lliMB %lli Nodes\n", (s_HashMax * sizeof(HashNode_t)) / kMB(1), s_HashMax );
 
 	// file only histogram
 
